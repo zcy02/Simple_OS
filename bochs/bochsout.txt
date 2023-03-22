@@ -31,17 +31,17 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7fd452756010. after alignment, vector=0x7fd452757000
+00000000000i[MEM0  ] allocated memory at 0x7f2d473a4010. after alignment, vector=0x7f2d473a5000
 00000000000i[MEM0  ] 512.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=4096
-00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/mnt/d/courses/OS-Design/bochs/share/bochs/BIOS-bochs-latest')
+00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/mnt/d/courses/Simple_OS/bochs/share/bochs/BIOS-bochs-latest')
 00000000000i[PLUGIN] init_dev of 'pci' plugin device by virtual method
 00000000000i[DEV   ] i440FX PMC present at device 0, function 0
 00000000000i[PLUGIN] init_dev of 'pci2isa' plugin device by virtual method
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Fri Mar 10 17:19:19 2023 (time0=1678439959)
+00000000000i[CMOS  ] Setting initial clock to: Fri Mar 17 14:13:25 2023 (time0=1679033605)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -54,9 +54,9 @@
 00000000000i[BXVGA ] VBE Bochs Display Extension Enabled
 00000000000i[XGUI  ] test_alloc_colors: 16 colors available out of 16 colors tried
 00000000000i[XGUI  ] font 8 wide x 16 high, display depth = 24
-00000000000i[KEYMAP] Loading keymap from '/mnt/d/courses/OS-Design/bochs/share/bochs/keymaps/x11-pc-us.map'
+00000000000i[KEYMAP] Loading keymap from '/mnt/d/courses/Simple_OS/bochs/share/bochs/keymaps/x11-pc-us.map'
 00000000000i[KEYMAP] Loaded 168 symbols
-00000000000i[MEM0  ] rom at 0xc0000/41984 ('/mnt/d/courses/OS-Design/bochs/share/bochs/VGABIOS-lgpl-latest')
+00000000000i[MEM0  ] rom at 0xc0000/41984 ('/mnt/d/courses/Simple_OS/bochs/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[PLUGIN] init_dev of 'floppy' plugin device by virtual method
 00000000000i[DMA   ] channel 2 used by Floppy Drive
 00000000000i[FLOPPY] Using boot sequence disk, none, none
