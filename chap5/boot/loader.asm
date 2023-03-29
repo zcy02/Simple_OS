@@ -46,7 +46,7 @@ loader_start:
     xor edx, edx
     .find_max_memory:
         mov eax, [ebx]
-        add eax, [ebx+8]
+        add eax, [ebx + 8]
         add ebx, 20
         cmp edx, eax
         jge .next_ards
@@ -114,12 +114,76 @@ p_mode_start:
     mov es, ax
     mov ss, ax
     mov esp, LOADER_STACK_TOP
-    mov ax, SELECTOR_VIDEO
-    mov gs, ax
-    mov byte [gs:160], 'H'
-    mov byte [gs:162], 'E'
-    mov byte [gs:164], 'L'
-    mov byte [gs:166], 'L'
-    mov byte [gs:168], 'O'
+
+    call setup_page
+    sgdt [gdt_ptr]
+    mov ebx, [gdt_ptr + 2]  ; 获得 gdt_base
+    or dword [ebx + 0x18 + 4], 0xc0000000
+    ; gdt 第三个描述符 video，每个 8B，取高 4B，段基址加上 3GB
+    add dword [gdt_ptr + 2], 0xc0000000
+    add esp, 0xc0000000
+
+    mov eax, PAGE_DIR_TABLE_ADDR
+    mov cr3, eax
+
+    mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax
+
+    lgdt [gdt_ptr]
+    mov byte [gs:160], 'V'
+    mov byte [gs:162], 'i'
+    mov byte [gs:164], 'r'
+    mov byte [gs:166], 't'
+    mov byte [gs:168], 'u'
+    mov byte [gs:170], 'a'
+    mov byte [gs:172], 'l'
     jmp $
+
+setup_page:
+    xor eax, eax
+    mov ecx, 4096
+    mov edi, 0x100000
+    rep stosb   ; 将页目录表内存清零
+
+.create_pde:
+    mov eax, PAGE_DIR_TABLE_ADDR
+    add eax, 0x1000 ; 第一页的物理地址
+    mov ebx, eax
+    or eax, PAGE_P | PAGE_RW_W | PAGE_US_U
+    mov [PAGE_DIR_TABLE_ADDR], eax  ; 首个 PDE
+    mov [PAGE_DIR_TABLE_ADDR + 0xc00], eax  
+    ; 高 10 位为 0x300，第 768 个 PDE 的物理地址，高 3GB 以上对应低端 4MB 以内
+    ; 0x300 = 768 以上的目录项用于内核空间
+    sub eax, 0x1000
+    mov [PAGE_DIR_TABLE_ADDR + 4092], eax
+    ; 最后一个 1023 目录项指向页目录表物理地址，将页目录表作为页表看待
+
+    mov ecx, 256    ; 1MB 低端内存占 256 页
+    mov eax, PAGE_P | PAGE_RW_W | PAGE_US_U
+    mov esi, 0
+.create_kernel_pte:
+    mov [ebx + esi*4], eax
+    add eax, 0x1000   ; 下一页的物理地址
+    inc esi
+    loop .create_kernel_pte
+ 
+    mov eax, PAGE_DIR_TABLE_ADDR
+    add eax, 0x2000
+    or eax, PAGE_P | PAGE_RW_W | PAGE_US_U
+    mov ebx, PAGE_DIR_TABLE_ADDR
+    mov ecx, 254    ; 769-1022 的页目录项
+    mov esi, 769
+    ; 769 号 PDE 指向页目录表
+.create_kernel_pde:
+    mov [ebx + esi*4], eax
+    inc esi
+    add eax, 0x1000
+    loop .create_kernel_pde
+    ret
+
+
+
+
+
 
