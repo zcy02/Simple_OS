@@ -115,6 +115,14 @@ p_mode_start:
     mov ss, ax
     mov esp, LOADER_STACK_TOP
 
+    ; 加载内核
+    mov eax, KERNEL_SECTOR
+    mov ebx, KERNEL_BIN_BASE_ADDR
+    mov ecx, 200
+    ; 扇区号、加载到的内存地址、扇区数
+    call read_disk_m_32
+
+    ; 分页启动
     call setup_page
     sgdt [gdt_ptr]
     mov ebx, [gdt_ptr + 2]  ; 获得 gdt_base
@@ -130,7 +138,7 @@ p_mode_start:
     or eax, 0x80000000
     mov cr0, eax
 
-    lgdt [gdt_ptr]
+    lgdt [gdt_ptr]  ; 重新加载 GDT
     mov byte [gs:160], 'V'
     mov byte [gs:162], 'i'
     mov byte [gs:164], 'r'
@@ -138,12 +146,19 @@ p_mode_start:
     mov byte [gs:168], 'u'
     mov byte [gs:170], 'a'
     mov byte [gs:172], 'l'
-    jmp $
+    
+    jmp SELECTOR_CODE:enter_kernel
+
+enter_kernel:
+    call kernel_init
+    mov esp, 0xc009f000 ; 选择保守的栈底，增加栈空间
+    jmp KERNEL_ENTER_ADDR   ; 0c001500 -> 0x1500
 
 setup_page:
     xor eax, eax
     mov ecx, 4096
     mov edi, 0x100000
+    cld
     rep stosb   ; 将页目录表内存清零
 
 .create_pde:
@@ -182,8 +197,100 @@ setup_page:
     loop .create_kernel_pde
     ret
 
+kernel_init:
+    xor eax, eax
+    xor ebx, ebx
+    xor ecx, ecx
+    xor edx, edx
+    mov dx, [KERNEL_BIN_BASE_ADDR + 42] ; 每个 entry 大小，e_phentsize
+    mov ebx, [KERNEL_BIN_BASE_ADDR + 28]    ; pht 在文件中的偏移量，e_phoff
+    add ebx, KERNEL_BIN_BASE_ADDR   ; 加上基址得到第一个 program header
+    mov cx, [KERNEL_BIN_BASE_ADDR + 44] ; program header 数量
+.traverse_segment:
+    cmp byte [ebx + 0], PT_NULL ; 若为空类型
+    je .pt_is_null
 
+    push dword [ebx + 16]   ; 为 mem_cpy 压参数 1 p_filesz 大小
+    mov eax, [ebx + 4]  ; p_offset
+    add eax, KERNEL_BIN_BASE_ADDR   ; 算出该段物理地址
+    push eax    ; 2 压入该段物理地址
+    push dword [ebx + 8]    ; 3 p_vaddr 目标虚拟地址
 
+    call mem_cpy
+    add esp, 12 ; 恢复栈指针
+
+.pt_is_null:
+    add ebx, edx    ; 下一个 entry
+    loop .traverse_segment
+    ret
+
+mem_cpy:
+    cld ; clean direction，DF = 0， esi edi 自动增加
+    push ebp    ; 先备份 ebp
+    mov ebp, esp    ; 栈顶
+    push ecx    ; 备份 ecx 后面 rep 要借助 ecx 完成计数复制内存
+
+    mov edi, [ebp + 8]  ; 取得目的地址
+    mov esi, [ebp + 12] ; 取得源地址
+    mov ecx, [ebp + 16] ; 取得段尺寸
+    rep movsb   ; 拷贝
+
+    pop ecx ; 恢复 ecx
+    pop ebp ; 最后恢复 ebp
+    ret
+
+read_disk_m_32:
+    mov esi, eax    ;out要用到al，备份到esi
+    mov di, cx  ;读取数据用到cx，备份
+    ; 设置Sector count
+    mov dx, 0x1f2
+    mov al, cl
+    out dx, al
+    mov eax, esi
+    ; 设置LBA地址
+    mov dx, 0x1f3
+    out dx, al  ; 0-7位 对应 al
+
+    mov cl, 8
+    shr eax, cl ; 右移8位，al 此时对应 8-15位
+    mov dx, 0x1f4
+    out dx, al
+
+    shr eax, cl ; 再右移8位， al 此时对应 16-23位
+    mov dx, 0x1f5
+    out dx, al
+
+    shr eax, cl ; 右移8位
+    and al, 0x0f    ; mask 取al低四位，即对应 24-27位
+    or al, 0xe0    ; 高四位设置 1110，LBA模式、主盘
+    mov dx, 0x1f6
+    out dx, al
+
+    ; 读硬盘命令
+    mov dx, 0x1f7   ; command reg
+    mov al, 0x20    ; 0x20 read sector
+    out dx, al
+
+    .not_ready:
+        nop
+        in al, dx   ; 读 0x1f7 时为 status reg
+        and al, 0x88    ; mask 取7、3位（BYS 和 DRQ）
+        cmp al, 0x08    ; 第3位为1表示硬盘控制器已准备好数据传输
+        jnz .not_ready
+
+        ; 从Data reg读数据
+        
+        mov ax, di  ; 扇区数
+        mov dx, 256 ; 每个扇区 512B，每次读 2B，每个扇区 256 次
+        mul dx  ; dx 乘以 ax，结果低16位放入 ax，高16位在 dx
+        mov cx, ax  ; 读盘次数存入 loop 计数器 cx 中
+        mov dx, 0x1f0
+    .read:
+        in ax, dx   ; 读硬盘
+        mov [ebx], ax    ; 32 位版本改用 ebx
+        add ebx, 2   ; 每次两字节
+        loop .read  ; cx 作为计数器
+        ret
 
 
 

@@ -45,9 +45,12 @@ TI_LDT equ 100b
 ; Paging attributes
 PAGE_P equ 1b 
 PAGE_RW_R equ 00b
-
 PAGE_RW_W equ 10b
-
 PAGE_US_S equ 000b
-
 PAGE_US_U equ 100b
+
+; Kernel
+KERNEL_SECTOR equ 0x9
+KERNEL_BIN_BASE_ADDR equ 0x70000
+KERNEL_ENTER_ADDR equ 0xc0001500
+PT_NULL equ 0x0
