@@ -55,7 +55,7 @@ static inline void insw(uint16_t port, void* addr, uint32_t word_cnt){
         /********************************************************/
         // 这里是 AT&T 语法的汇编语言，相当于： cld
         //                                      mov edi, addr
-        //                                      mov ecx. word_cnt
+        //                                      mov ecx, word_cnt
         //                                      mov dx, port
         //                                      rep insw
 }

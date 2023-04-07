@@ -25,7 +25,7 @@ static void make_idt_desc(struct gate_desc* p_gdesc, uint8_t attr, intr_handler 
 static struct gate_desc idt[IDT_DESC_CNT];  // idt 本质上就是个中断门描述符数组
 
 char* intr_name[IDT_DESC_CNT];                          // 用于保存异常的名字
-intr_handler idt_table[IDT_DESC_CNT];                   // 用于保存处理程序地址
+intr_handler intr_handler_table[IDT_DESC_CNT];                   // 用于保存处理程序地址
 extern intr_handler intr_entry_table[IDT_DESC_CNT];  // 声明引用在 kernel.S 中的中断处理函数入口数组
 // intr_handler 实际上是 void* ,在 interrupt.h 里定义的
 /* 初始化可编程中断控制器 8259A */
@@ -88,9 +88,9 @@ static void general_intr_handler(uint8_t vec_nr){
 static void exception_init(void){
         int i;
         for(i = 0;i < IDT_DESC_CNT; i++){
-                // idt_table 数组中的函数是在进入中断后根据中断向量号调用的
-                // 见 kernel.asm 的 call [idt_table = %1*4]
-                idt_table[i] = general_intr_handler;    // 以后用register_handler 来注册具体的处理函数
+                // intr_handler_table 数组中的函数是在进入中断后根据中断向量号调用的
+                // 见 kernel.asm 的 call [intr_handler_table = %1*4]
+                intr_handler_table[i] = general_intr_handler;    // 以后用register_handler 来注册具体的处理函数
                 intr_name[i] = "unknown";
         }
         intr_name[0] = "#DE Divide Error";
@@ -100,7 +100,7 @@ static void exception_init(void){
         intr_name[4] = "#OF Overflow Exception";
         intr_name[5] = "#BR BOUND Range Exceeded Exception"; 
         intr_name[6] = "#UD Invalid Opcode Exception"; 
-        intr_name[7] = "#NM Device No七 Available Exception"; 
+        intr_name[7] = "#NM Device No Available Exception"; 
         intr_name[8] = "JIDF Double Fault Exception";
         intr_name[9] = "Coprocessor Segment Overrun";
         intr_name[10] = "#TS Invalid TSS Exception"; 
@@ -124,7 +124,7 @@ void idt_init(){
         pic_init();             //初始化 8259A
 
         /*加载 idt*/
-        uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)((uint32_t)idt << 16)));
+        uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)(uint32_t)idt << 16));
         asm volatile("lidt %0"::"m"(idt_operand));
         put_str("idt_init done\n");
 }

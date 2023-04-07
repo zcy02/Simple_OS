@@ -10,5 +10,4 @@ ld -m elf_i386 -Ttext 0xc0001500 -e main -o build/kernel.bin build/main.o  build
 
 strip --remove-section=.note.gnu.property build/kernel.bin &&\
 
-dd if=build/kernel.bin of=../bin/hd60M.img bs=512 count=200 seek=9 conv=notrunc
-
+dd if=build/kernel.bin of=../bochs/bin/hd60M.img bs=512 count=200 seek=9 conv=notrunc
