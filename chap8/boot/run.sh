@@ -1,0 +1,1 @@
+nasm -I include/ -o loader.bin loader.asm && nasm -I include/ -o mbr.bin mbr.asm && dd if=loader.bin of=../../bochs/bin/hd60M.img bs=512 count=3 seek=2 conv=notrunc && dd if=mbr.bin of=../../bochs/bin/hd60M.img bs=512 count=1 conv=notrunc
