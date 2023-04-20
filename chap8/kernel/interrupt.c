@@ -10,7 +10,7 @@
 #define PIC_S_DATA 0xA1
 
 #define IDT_DESC_CNT 0x31  // 目前总共支持的中断数量
-#define EFLAGS_IF       0x00000200      // eflags中的 IF 位为 1
+#define EFLAGS_MASK_IF       0x00000200      // eflags中的 IF 位为 1
 #define GET_EFLAGS(EFLAG_VAR) asm volatile("pushfl; popl %0": "=g" (EFLAG_VAR))
 
 /*中断描述结构体*/
@@ -157,7 +157,7 @@ enum intr_status intr_disable(){
         }
 }
 
-/*将中断状态设置位 status*/
+/*将中断状态设置为 status*/
 enum intr_status intr_set_status(enum intr_status status){
         return status & INTR_ON ? intr_enable():intr_disable();
 }
@@ -166,5 +166,5 @@ enum intr_status intr_set_status(enum intr_status status){
 enum intr_status intr_get_status(){
         uint32_t eflags = 0;
 	GET_EFLAGS(eflags);
-        return (EFLAGS_IF & eflags)?INTR_ON:INTR_OFF;
+        return (EFLAGS_MASK_IF & eflags) ? INTR_ON:INTR_OFF;
 }
