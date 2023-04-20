@@ -196,7 +196,7 @@ static void add_projection(void* _vaddr, void* _paddr) {
 
 /*分配多个页空间，成功则返回起始虚拟地址，失败时返回 NULL*/
 void* malloc_page(enum pool_flags flag, uint32_t cnt) {
-    ASSERT(cnt > 0 && cnt < 3840);
+    ASSERT(cnt > 0 && cnt < 65280);
     void* vaddr_start = get_vaddr(flag, cnt);
     if (vaddr_start == NULL) {
         return NULL;
