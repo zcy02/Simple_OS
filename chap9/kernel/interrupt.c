@@ -79,11 +79,28 @@ static void general_intr_handler(uint8_t vec_nr){
                 // 0x2f 是从片 8259A 上的最后一个 IRQ 引脚，保留项
                 return ;
         }
-        put_str("int vector : 0x");
-        put_int(vec_nr);
-        put_char(' ');
+        //put_str("int vector : 0x");
+        //put_int(vec_nr);
+        //put_char('\n');
+        set_cursor(0);
+        int cursor_pos = 0;
+        while(cursor_pos < 320) {
+           put_char(' ');
+           cursor_pos++;
+        }
+        set_cursor(0);
+           put_str("*****  excetion message begin  *****\n");
+        set_cursor(88);	// 从第2行第8个字符开始打印
         put_str(intr_name[vec_nr]);
-        put_char('\n');
+        if (vec_nr == 14) {	  // 若为Pagefault,将缺失的地址打印出来并悬停
+           int page_fault_vaddr = 0; 
+           asm ("movl %%cr2, %0" : "=r" (page_fault_vaddr));	  // cr2是存放造成page_fault的地址
+           put_str("\npage fault addr is ");put_int(page_fault_vaddr); 
+        }
+        put_str("\n*****  excetion message end  *****\n");
+        // 能进入中断处理程序就表示已经处在关中断情况下,
+        // 不会出现调度进程的情况。故下面的死循环不会再被中断。
+        while(1);
 }
 
 /*完成一般中断处理函数注册及异常名称注册*/
@@ -102,7 +119,7 @@ static void exception_init(void){
         intr_name[4] = "#OF Overflow Exception";
         intr_name[5] = "#BR BOUND Range Exceeded Exception"; 
         intr_name[6] = "#UD Invalid Opcode Exception"; 
-        intr_name[7] = "#NM Device No七 Available Exception"; 
+        intr_name[7] = "#NM Device No Available Exception"; 
         intr_name[8] = "JIDF Double Fault Exception";
         intr_name[9] = "Coprocessor Segment Overrun";
         intr_name[10] = "#TS Invalid TSS Exception"; 
@@ -117,7 +134,6 @@ static void exception_init(void){
         intr_name[19] = "#XF SIMD Floating-Point Exception";
 }
 
-/*完成有关中断的所有初始化工作*/
 /*完成有关中断的所有初始化工作*/
 void idt_init(){
         put_str("idt_init start\n");
@@ -167,4 +183,10 @@ enum intr_status intr_get_status(){
         uint32_t eflags = 0;
 	GET_EFLAGS(eflags);
         return (EFLAGS_IF & eflags)?INTR_ON:INTR_OFF;
+}
+
+/* 在中断处理程序数组第vector_no个元素中注册安装中断处理程序function */
+void register_handler(uint8_t vector_no, intr_handler function) {
+/* idt_table数组中的函数是在进入中断后根据中断向量号调用的*/
+   idt_table[vector_no] = function; 
 }

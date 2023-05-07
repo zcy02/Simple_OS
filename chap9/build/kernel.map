@@ -1,53 +1,61 @@
 
-分配公共符号
-公共符号            大小              文件
+Allocating common symbols
+Common symbol       size              file
 
-user_pool           0x10              /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
-intr_name           0xc4              /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
-kernel_vaddr        0xc               /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
-idt_table           0xc4              /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
-kernel_pool         0x10              /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
+thread_ready_list   0x10              build/thread.o
+thread_all_list     0x10              build/thread.o
+user_pool           0x10              build/memory.o
+intr_name           0xc4              build/interrupt.o
+main_thread         0x4               build/thread.o
+ticks               0x4               build/timer.o
+kernel_vaddr        0xc               build/memory.o
+idt_table           0xc4              build/interrupt.o
+kernel_pool         0x10              build/memory.o
 
-舍弃的输入节
+Discarded input sections
 
  .note.GNU-stack
-                0x0000000000000000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
+                0x0000000000000000        0x0 build/main.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/init.o
+                0x0000000000000000        0x0 build/init.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
+                0x0000000000000000        0x0 build/interrupt.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/timer.o
+                0x0000000000000000        0x0 build/timer.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/debug.o
+                0x0000000000000000        0x0 build/debug.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/string.o
+                0x0000000000000000        0x0 build/string.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/bitmap.o
+                0x0000000000000000        0x0 build/bitmap.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
+                0x0000000000000000        0x0 build/memory.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
+                0x0000000000000000        0x0 build/thread.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 build/list.o
 
-内存配置
+Memory Configuration
 
-名称           来源             长度             属性
+Name             Origin             Length             Attributes
 *default*        0x0000000000000000 0xffffffffffffffff
 
-链结器命令稿和内存映射
+Linker script and memory map
 
-段 .text 的地址设置为 0xc0001500
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/init.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/timer.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/kernel.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/print.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/debug.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/string.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/bitmap.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
-LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
+Address of section .text set to 0xc0001500
+LOAD build/main.o
+LOAD build/init.o
+LOAD build/interrupt.o
+LOAD build/timer.o
+LOAD build/kernel.o
+LOAD build/print.o
+LOAD build/debug.o
+LOAD build/string.o
+LOAD build/bitmap.o
+LOAD build/memory.o
+LOAD build/thread.o
+LOAD build/switch.o
+LOAD build/list.o
                 [!provide]                        PROVIDE (__executable_start = SEGMENT_START ("text-segment", 0x8048000))
                 0x00000000080480d4                . = (SEGMENT_START ("text-segment", 0x8048000) + SIZEOF_HEADERS)
 
@@ -81,7 +89,7 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
 .rel.dyn        0x00000000080480d4        0x0
  *(.rel.init)
  *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
- .rel.text      0x00000000080480d4        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
+ .rel.text      0x00000000080480d4        0x0 build/main.o
  *(.rel.fini)
  *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*)
  *(.rel.data.rel.ro .rel.data.rel.ro.* .rel.gnu.linkonce.d.rel.ro.*)
@@ -91,7 +99,7 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
  *(.rel.ctors)
  *(.rel.dtors)
  *(.rel.got)
- .rel.got       0x00000000080480d4        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
+ .rel.got       0x00000000080480d4        0x0 build/main.o
  *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
  *(.rel.ifunc)
 
@@ -99,8 +107,11 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
  *(.rel.plt)
                 [!provide]                        PROVIDE (__rel_iplt_start = .)
  *(.rel.iplt)
- .rel.iplt      0x00000000080480d4        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
+ .rel.iplt      0x00000000080480d4        0x0 build/main.o
                 [!provide]                        PROVIDE (__rel_iplt_end = .)
+
+.relr.dyn
+ *(.relr.dyn)
                 0x0000000008049000                . = ALIGN (CONSTANT (MAXPAGESIZE))
 
 .init
@@ -109,7 +120,7 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
 .plt            0x0000000008049000        0x0
  *(.plt)
  *(.iplt)
- .iplt          0x0000000008049000        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
+ .iplt          0x0000000008049000        0x0 build/main.o
 
 .plt.got
  *(.plt.got)
@@ -117,62 +128,81 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
 .plt.sec
  *(.plt.sec)
 
-.text           0x00000000c0001500     0x19c3
+.text           0x00000000c0001500     0x20d9
  *(.text.unlikely .text.*_unlikely .text.unlikely.*)
  *(.text.exit .text.exit.*)
  *(.text.startup .text.startup.*)
  *(.text.hot .text.hot.*)
  *(SORT_BY_NAME(.text.sorted.*))
  *(.text .stub .text.* .gnu.linkonce.t.*)
- .text          0x00000000c0001500       0x59 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
+ .text          0x00000000c0001500       0xa3 build/main.o
                 0x00000000c0001500                main
-                0x00000000c0001540                k_thread_a
- .text          0x00000000c0001559       0x23 /home/daozljs/bochstest/Simple_OS/chap8/build/init.o
-                0x00000000c0001559                init_all
- .text          0x00000000c000157c      0x3c3 /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
-                0x00000000c0001861                idt_init
-                0x00000000c00018ac                intr_enable
-                0x00000000c00018d5                intr_disable
-                0x00000000c00018fe                intr_set_status
-                0x00000000c000191c                intr_get_status
- .text          0x00000000c000193f       0xf6 /home/daozljs/bochstest/Simple_OS/chap8/build/timer.o
-                0x00000000c00019f5                timer_init
- *fill*         0x00000000c0001a35        0xb 
- .text          0x00000000c0001a40      0x525 /home/daozljs/bochstest/Simple_OS/chap8/build/kernel.o
-                0x00000000c0001a40                intr_exit
- *fill*         0x00000000c0001f65        0xb 
- .text          0x00000000c0001f70      0x14c /home/daozljs/bochstest/Simple_OS/chap8/build/print.o
-                0x00000000c0001f70                put_char
-                0x00000000c000203d                put_int
-                0x00000000c000209e                put_str
- .text          0x00000000c00020bc       0xa5 /home/daozljs/bochstest/Simple_OS/chap8/build/debug.o
-                0x00000000c00020bc                panic_spin
- .text          0x00000000c0002161      0x454 /home/daozljs/bochstest/Simple_OS/chap8/build/string.o
-                0x00000000c0002161                memset
-                0x00000000c00021bd                memcpy
-                0x00000000c0002225                memcmp
-                0x00000000c00022bb                strcpy
-                0x00000000c000231e                strlen
-                0x00000000c0002378                strcmp
-                0x00000000c00023ff                strchr
-                0x00000000c0002465                strrchr
-                0x00000000c00024ce                strcat
-                0x00000000c0002548                strchrs
- .text          0x00000000c00025b5      0x270 /home/daozljs/bochstest/Simple_OS/chap8/build/bitmap.o
-                0x00000000c00025b5                bitmap_init
-                0x00000000c00025dc                bitmap_scan_test
-                0x00000000c000261e                bitmap_scan
-                0x00000000c000276c                bitmap_set
- .text          0x00000000c0002825      0x557 /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
-                0x00000000c00028aa                pte_ptr
-                0x00000000c00028db                pde_ptr
-                0x00000000c0002a8d                malloc_page
-                0x00000000c0002b57                get_kernel_pages
-                0x00000000c0002d47                mem_init
- .text          0x00000000c0002d7c      0x147 /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
-                0x00000000c0002d8f                thread_create
-                0x00000000c0002e05                init_thread
-                0x00000000c0002e6b                thread_start
+                0x00000000c0001571                k_thread_a
+                0x00000000c000158a                k_thread_b
+ .text          0x00000000c00015a3       0x28 build/init.o
+                0x00000000c00015a3                init_all
+ .text          0x00000000c00015cb      0x43b build/interrupt.o
+                0x00000000c000190c                idt_init
+                0x00000000c0001957                intr_enable
+                0x00000000c0001980                intr_disable
+                0x00000000c00019a9                intr_set_status
+                0x00000000c00019c7                intr_get_status
+                0x00000000c00019ea                register_handler
+ .text          0x00000000c0001a06      0x195 build/timer.o
+                0x00000000c0001b3b                timer_init
+ *fill*         0x00000000c0001b9b        0x5 
+ .text          0x00000000c0001ba0      0x540 build/kernel.o
+                0x00000000c0001ba0                intr_exit
+ .text          0x00000000c00020e0      0x170 build/print.o
+                0x00000000c00020e0                put_char
+                0x00000000c00021ad                put_int
+                0x00000000c000220e                put_str
+                0x00000000c000222c                set_cursor
+ .text          0x00000000c0002250       0xa5 build/debug.o
+                0x00000000c0002250                panic_spin
+ .text          0x00000000c00022f5      0x454 build/string.o
+                0x00000000c00022f5                memset
+                0x00000000c0002351                memcpy
+                0x00000000c00023b9                memcmp
+                0x00000000c000244f                strcpy
+                0x00000000c00024b2                strlen
+                0x00000000c000250c                strcmp
+                0x00000000c0002593                strchr
+                0x00000000c00025f9                strrchr
+                0x00000000c0002662                strcat
+                0x00000000c00026dc                strchrs
+ .text          0x00000000c0002749      0x270 build/bitmap.o
+                0x00000000c0002749                bitmap_init
+                0x00000000c0002770                bitmap_scan_test
+                0x00000000c00027b2                bitmap_scan
+                0x00000000c0002900                bitmap_set
+ .text          0x00000000c00029b9      0x604 build/memory.o
+                0x00000000c0002c7f                pte_ptr
+                0x00000000c0002cb0                pde_ptr
+                0x00000000c0002e6e                malloc_page
+                0x00000000c0002f44                kalloc
+                0x00000000c0002f88                mem_init
+ .text          0x00000000c0002fbd      0x41c build/thread.o
+                0x00000000c0002fbd                running_thread
+                0x00000000c0002fe8                thread_create
+                0x00000000c000305e                init_thread
+                0x00000000c00030f9                thread_start
+                0x00000000c0003274                schedule
+                0x00000000c000339c                thread_init
+ *fill*         0x00000000c00033d9        0x7 
+ .text          0x00000000c00033e0       0x15 build/switch.o
+                0x00000000c00033e0                switch_to
+ .text          0x00000000c00033f5      0x1e4 build/list.o
+                0x00000000c00033f5                list_init
+                0x00000000c0003422                list_insert_before
+                0x00000000c0003463                list_push
+                0x00000000c0003480                list_append
+                0x00000000c000349d                list_remove
+                0x00000000c00034d3                list_pop
+                0x00000000c00034f2                elem_find
+                0x00000000c000352d                list_traversal
+                0x00000000c000358b                list_len
+                0x00000000c00035c0                list_empty
  *(.gnu.warning)
 
 .fini
@@ -180,20 +210,22 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
                 [!provide]                        PROVIDE (__etext = .)
                 [!provide]                        PROVIDE (_etext = .)
                 [!provide]                        PROVIDE (etext = .)
-                0x00000000c0003000                . = ALIGN (CONSTANT (MAXPAGESIZE))
-                0x00000000c0003000                . = SEGMENT_START ("rodata-segment", (ALIGN (CONSTANT (MAXPAGESIZE)) + (. & (CONSTANT (MAXPAGESIZE) - 0x1))))
+                0x00000000c0004000                . = ALIGN (CONSTANT (MAXPAGESIZE))
+                0x00000000c0004000                . = SEGMENT_START ("rodata-segment", (ALIGN (CONSTANT (MAXPAGESIZE)) + (. & (CONSTANT (MAXPAGESIZE) - 0x1))))
 
-.rodata         0x00000000c0003000      0x539
+.rodata         0x00000000c0004000      0x874
  *(.rodata .rodata.* .gnu.linkonce.r.*)
- .rodata        0x00000000c0003000       0x1e /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
- .rodata        0x00000000c000301e        0xa /home/daozljs/bochstest/Simple_OS/chap8/build/init.o
- .rodata        0x00000000c0003028      0x271 /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
- .rodata        0x00000000c0003299       0x12 /home/daozljs/bochstest/Simple_OS/chap8/build/timer.o
- .rodata        0x00000000c00032ab       0x3f /home/daozljs/bochstest/Simple_OS/chap8/build/debug.o
- .rodata        0x00000000c00032ea       0xb9 /home/daozljs/bochstest/Simple_OS/chap8/build/string.o
- *fill*         0x00000000c00033a3        0x1 
- .rodata        0x00000000c00033a4       0x64 /home/daozljs/bochstest/Simple_OS/chap8/build/bitmap.o
- .rodata        0x00000000c0003408      0x131 /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
+ .rodata        0x00000000c0004000       0x32 build/main.o
+ .rodata        0x00000000c0004032        0xa build/init.o
+ .rodata        0x00000000c000403c      0x2bd build/interrupt.o
+ *fill*         0x00000000c00042f9        0x3 
+ .rodata        0x00000000c00042fc       0x6b build/timer.o
+ .rodata        0x00000000c0004367       0x3f build/debug.o
+ .rodata        0x00000000c00043a6       0xb9 build/string.o
+ *fill*         0x00000000c000445f        0x1 
+ .rodata        0x00000000c0004460       0x64 build/bitmap.o
+ .rodata        0x00000000c00044c4      0x234 build/memory.o
+ .rodata        0x00000000c00046f8      0x17c build/thread.o
 
 .rodata1
  *(.rodata1)
@@ -214,7 +246,7 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
 
 .exception_ranges
  *(.exception_ranges*)
-                0x00000000c0004539                . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE))
+                0x00000000c0005874                . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE))
 
 .eh_frame
  *(.eh_frame)
@@ -229,7 +261,7 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
 .exception_ranges
  *(.exception_ranges*)
 
-.tdata          0x00000000c0004539        0x0
+.tdata          0x00000000c0005874        0x0
                 [!provide]                        PROVIDE (__tdata_start = .)
  *(.tdata .tdata.* .gnu.linkonce.td.*)
 
@@ -237,18 +269,18 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
  *(.tbss .tbss.* .gnu.linkonce.tb.*)
  *(.tcommon)
 
-.preinit_array  0x00000000c0004539        0x0
+.preinit_array  0x00000000c0005874        0x0
                 [!provide]                        PROVIDE (__preinit_array_start = .)
  *(.preinit_array)
                 [!provide]                        PROVIDE (__preinit_array_end = .)
 
-.init_array     0x00000000c0004539        0x0
+.init_array     0x00000000c0005874        0x0
                 [!provide]                        PROVIDE (__init_array_start = .)
  *(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*))
  *(.init_array EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .ctors)
                 [!provide]                        PROVIDE (__init_array_end = .)
 
-.fini_array     0x00000000c0004539        0x0
+.fini_array     0x00000000c0005874        0x0
                 [!provide]                        PROVIDE (__fini_array_start = .)
  *(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*))
  *(.fini_array EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .dtors)
@@ -278,69 +310,77 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
 .dynamic
  *(.dynamic)
 
-.got            0x00000000c000453c        0x0
+.got            0x00000000c0005874        0x0
  *(.got)
- .got           0x00000000c000453c        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
+ .got           0x00000000c0005874        0x0 build/main.o
  *(.igot)
-                0x00000000c000453c                . = DATA_SEGMENT_RELRO_END (., (SIZEOF (.got.plt) >= 0xc)?0xc:0x0)
+                0x00000000c0005874                . = DATA_SEGMENT_RELRO_END (., (SIZEOF (.got.plt) >= 0xc)?0xc:0x0)
 
-.got.plt        0x00000000c000453c        0x0
+.got.plt        0x00000000c0005874        0x0
  *(.got.plt)
- .got.plt       0x00000000c000453c        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
+ .got.plt       0x00000000c0005874        0x0 build/main.o
  *(.igot.plt)
- .igot.plt      0x00000000c000453c        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
+ .igot.plt      0x00000000c0005874        0x0 build/main.o
 
-.data           0x00000000c000453c       0xd8
+.data           0x00000000c0005874       0xdc
  *(.data .data.* .gnu.linkonce.d.*)
- .data          0x00000000c000453c        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
- .data          0x00000000c000453c        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/init.o
- .data          0x00000000c000453c        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
- .data          0x00000000c000453c        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/timer.o
- .data          0x00000000c000453c       0xce /home/daozljs/bochstest/Simple_OS/chap8/build/kernel.o
-                0x00000000c000454e                intr_entry_table
- *fill*         0x00000000c000460a        0x2 
- .data          0x00000000c000460c        0x8 /home/daozljs/bochstest/Simple_OS/chap8/build/print.o
- .data          0x00000000c0004614        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/debug.o
- .data          0x00000000c0004614        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/string.o
- .data          0x00000000c0004614        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/bitmap.o
- .data          0x00000000c0004614        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
- .data          0x00000000c0004614        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
+ .data          0x00000000c0005874        0x0 build/main.o
+ .data          0x00000000c0005874        0x0 build/init.o
+ .data          0x00000000c0005874        0x0 build/interrupt.o
+ .data          0x00000000c0005874        0x0 build/timer.o
+ .data          0x00000000c0005874       0xd2 build/kernel.o
+                0x00000000c0005886                intr_entry_table
+ *fill*         0x00000000c0005946        0x2 
+ .data          0x00000000c0005948        0x8 build/print.o
+ .data          0x00000000c0005950        0x0 build/debug.o
+ .data          0x00000000c0005950        0x0 build/string.o
+ .data          0x00000000c0005950        0x0 build/bitmap.o
+ .data          0x00000000c0005950        0x0 build/memory.o
+ .data          0x00000000c0005950        0x0 build/thread.o
+ .data          0x00000000c0005950        0x0 build/list.o
 
 .data1
  *(.data1)
-                0x00000000c0004614                _edata = .
+                0x00000000c0005950                _edata = .
                 [!provide]                        PROVIDE (edata = .)
-                0x00000000c0004614                . = .
-                0x00000000c0004614                __bss_start = .
+                0x00000000c0005950                . = .
+                0x00000000c0005950                __bss_start = .
 
-.bss            0x00000000c0004620      0x370
+.bss            0x00000000c0005960      0x398
  *(.dynbss)
  *(.bss .bss.* .gnu.linkonce.b.*)
- .bss           0x00000000c0004620        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
- .bss           0x00000000c0004620        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/init.o
- .bss           0x00000000c0004620      0x188 /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
- .bss           0x00000000c00047a8        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/timer.o
- .bss           0x00000000c00047a8        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/debug.o
- .bss           0x00000000c00047a8        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/string.o
- .bss           0x00000000c00047a8        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/bitmap.o
- .bss           0x00000000c00047a8        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
- .bss           0x00000000c00047a8        0x0 /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
+ .bss           0x00000000c0005960        0x0 build/main.o
+ .bss           0x00000000c0005960        0x0 build/init.o
+ .bss           0x00000000c0005960      0x188 build/interrupt.o
+ .bss           0x00000000c0005ae8        0x0 build/timer.o
+ .bss           0x00000000c0005ae8        0x0 build/debug.o
+ .bss           0x00000000c0005ae8        0x0 build/string.o
+ .bss           0x00000000c0005ae8        0x0 build/bitmap.o
+ .bss           0x00000000c0005ae8        0x0 build/memory.o
+ .bss           0x00000000c0005ae8        0x4 build/thread.o
+ .bss           0x00000000c0005aec        0x0 build/list.o
  *(COMMON)
- *fill*         0x00000000c00047a8       0x18 
- COMMON         0x00000000c00047c0      0x1a4 /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
-                0x00000000c00047c0                intr_name
-                0x00000000c00048a0                idt_table
- COMMON         0x00000000c0004964       0x2c /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
-                0x00000000c0004964                user_pool
-                0x00000000c0004974                kernel_vaddr
-                0x00000000c0004980                kernel_pool
-                0x00000000c0004990                . = ALIGN ((. != 0x0)?0x4:0x1)
-                0x00000000c0004990                . = ALIGN (0x4)
-                0x00000000c0004990                . = SEGMENT_START ("ldata-segment", .)
-                0x00000000c0004990                . = ALIGN (0x4)
-                0x00000000c0004990                _end = .
+ *fill*         0x00000000c0005aec       0x14 
+ COMMON         0x00000000c0005b00      0x1a4 build/interrupt.o
+                0x00000000c0005b00                intr_name
+                0x00000000c0005be0                idt_table
+ COMMON         0x00000000c0005ca4        0x4 build/timer.o
+                0x00000000c0005ca4                ticks
+ COMMON         0x00000000c0005ca8       0x2c build/memory.o
+                0x00000000c0005ca8                user_pool
+                0x00000000c0005cb8                kernel_vaddr
+                0x00000000c0005cc4                kernel_pool
+ COMMON         0x00000000c0005cd4       0x24 build/thread.o
+                0x00000000c0005cd4                thread_ready_list
+                0x00000000c0005ce4                thread_all_list
+                0x00000000c0005cf4                main_thread
+                0x00000000c0005cf8                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0x00000000c0005cf8                . = ALIGN (0x4)
+                0x00000000c0005cf8                . = SEGMENT_START ("ldata-segment", .)
+                0x00000000c0005cf8                . = ALIGN (0x4)
+                0x00000000c0005cf8                _end = .
                 [!provide]                        PROVIDE (end = .)
-                0x00000000c0004990                . = DATA_SEGMENT_END (.)
+                0x00000000c0005cf8                . = DATA_SEGMENT_END (.)
 
 .stab
  *(.stab)
@@ -362,16 +402,17 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
 
 .comment        0x0000000000000000       0x2a
  *(.comment)
- .comment       0x0000000000000000       0x2a /home/daozljs/bochstest/Simple_OS/chap8/build/main.o
-                                         0x2b (松开之前的大小)
- .comment       0x000000000000002a       0x2b /home/daozljs/bochstest/Simple_OS/chap8/build/init.o
- .comment       0x000000000000002a       0x2b /home/daozljs/bochstest/Simple_OS/chap8/build/interrupt.o
- .comment       0x000000000000002a       0x2b /home/daozljs/bochstest/Simple_OS/chap8/build/timer.o
- .comment       0x000000000000002a       0x2b /home/daozljs/bochstest/Simple_OS/chap8/build/debug.o
- .comment       0x000000000000002a       0x2b /home/daozljs/bochstest/Simple_OS/chap8/build/string.o
- .comment       0x000000000000002a       0x2b /home/daozljs/bochstest/Simple_OS/chap8/build/bitmap.o
- .comment       0x000000000000002a       0x2b /home/daozljs/bochstest/Simple_OS/chap8/build/memory.o
- .comment       0x000000000000002a       0x2b /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
+ .comment       0x0000000000000000       0x2a build/main.o
+                                         0x2b (size before relaxing)
+ .comment       0x000000000000002a       0x2b build/init.o
+ .comment       0x000000000000002a       0x2b build/interrupt.o
+ .comment       0x000000000000002a       0x2b build/timer.o
+ .comment       0x000000000000002a       0x2b build/debug.o
+ .comment       0x000000000000002a       0x2b build/string.o
+ .comment       0x000000000000002a       0x2b build/bitmap.o
+ .comment       0x000000000000002a       0x2b build/memory.o
+ .comment       0x000000000000002a       0x2b build/thread.o
+ .comment       0x000000000000002a       0x2b build/list.o
 
 .gnu.build.attributes
  *(.gnu.build.attributes .gnu.build.attributes.*)
@@ -433,11 +474,29 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
 .debug_ranges
  *(.debug_ranges)
 
+.debug_addr
+ *(.debug_addr)
+
+.debug_line_str
+ *(.debug_line_str)
+
+.debug_loclists
+ *(.debug_loclists)
+
 .debug_macro
  *(.debug_macro)
 
-.debug_addr
- *(.debug_addr)
+.debug_names
+ *(.debug_names)
+
+.debug_rnglists
+ *(.debug_rnglists)
+
+.debug_str_offsets
+ *(.debug_str_offsets)
+
+.debug_sup
+ *(.debug_sup)
 
 .gnu.attributes
  *(.gnu.attributes)
@@ -446,4 +505,4 @@ LOAD /home/daozljs/bochstest/Simple_OS/chap8/build/thread.o
  *(.note.GNU-stack)
  *(.gnu_debuglink)
  *(.gnu.lto_*)
-OUTPUT(/home/daozljs/bochstest/Simple_OS/chap8/build/kernel.bin elf32-i386)
+OUTPUT(build/kernel.bin elf32-i386)

@@ -1,6 +1,7 @@
 #ifndef __THREAD_THREAD_H
 #define __THREAD_THREAD_H
 #include "stdint.h"
+#include "list.h"
 
 /* 自定义通用函数类型,它将在很多线程函数中做为形参类型 */
 typedef void thread_func(void*);
@@ -22,7 +23,7 @@ enum task_status {
  * 此栈在线程自己的内核栈中位置固定,所在页的最顶端
 ********************************************/
 struct intr_stack {
-    uint32_t vec_no;	 // kernel.S 宏VECTOR中push %1压入的中断号
+    uint32_t vec_no;	 // kernel.S 宏 VECTOR 中 push %1 压入的中断号
     uint32_t edi;
     uint32_t esi;
     uint32_t ebp;
@@ -57,7 +58,7 @@ struct thread_stack {
    uint32_t edi;
    uint32_t esi;
 
-/* 线程第一次执行时,eip指向待调用的函数kernel_thread 
+/* 线程第一次执行时,eip指向待调用的函数 kernel_thread 
 其它时候,eip是指向switch_to的返回地址*/
    void (*eip) (thread_func* func, void* func_arg);
 
@@ -75,10 +76,19 @@ struct task_struct {
    enum task_status status;
    uint8_t priority;		 // 线程优先级
    char name[16];
+   uint8_t ticks; //任务时间片
+   uint32_t elapsed_ticks; //总时钟数
+   struct list_elem general_tag; //队列结点
+   struct list_elem all_list_tag;   //用于线程被加入全部线程队列时
+   uint32_t* pgdir;  //任务的页表，线程为 NULL
    uint32_t stack_magic;	 // 用这串数字做栈的边界标记,用于检测栈的溢出
 };
 
 void thread_create(struct task_struct* pthread, thread_func function, void* func_arg);
 void init_thread(struct task_struct* pthread, char* name, int prio);
 struct task_struct* thread_start(char* name, int prio, thread_func function, void* func_arg);
+void schedule(void);
+void thread_init(void);
+struct task_struct* thread_start(char* name, int prio, thread_func function, void* func_arg);
+struct task_struct* running_thread(void);
 #endif
