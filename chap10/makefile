@@ -114,7 +114,7 @@ mk_dir:
 	if [ ! -d $(BUILD_DIR) ]; then mkdir $(BUILD_DIR); fi
 
 hd:
-	sudo dd if=$(BUILD_DIR)/kernel.bin of=../../../bochs/bin/hd60M.img bs=512 count=200 seek=9 conv=notrunc
+	sudo dd if=$(BUILD_DIR)/kernel.bin of=../bochs/bin/hd60M.img bs=512 count=200 seek=9 conv=notrunc
 
 clean:
 	cd $(BUILD_DIR) && rm -f ./*

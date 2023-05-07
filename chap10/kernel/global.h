@@ -13,7 +13,7 @@
 #define SELECTOR_K_CODE         ((1 << 3) + (TI_GDT << 2) + RPLO) 
 #define SELECTOR_K_DATA         ((2 << 3) + (TI_GDT << 2) + RPLO) 
 #define SELECTOR_K_STACK        SELECTOR_K_DATA
-#define SELECTOR K GS           ((3 « 3) + (TI_GDT « 2) + RPLO)
+#define SELECTOR_K_GS           ((3 « 3) + (TI_GDT « 2) + RPLO)
 
 /*-------------- IDT描述符属性 －－－－－－－－－－－－*/
 #define IDT_DESC_P              1 
