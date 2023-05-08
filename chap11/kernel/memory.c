@@ -4,6 +4,7 @@
 #include "string.h"
 #include "debug.h"
 #include "sync.h"
+#include "global.h"
 #define PAGE_SIZE 4096    // 页的大小: 4k
 
 #define PDE_INDEX(addr) ((addr & 0xffc00000) >> 22) //取高 10 位

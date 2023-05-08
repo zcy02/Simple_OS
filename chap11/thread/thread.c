@@ -118,6 +118,8 @@ void schedule(void) {
    thread_tag = list_pop(&thread_ready_list);   
    struct task_struct* next = elem2entry(struct task_struct, general_tag, thread_tag);
    next->status = TASK_RUNNING;
+   //**激活用户进程页表
+   process_activate(next);
    switch_to(cur, next);
 }
 

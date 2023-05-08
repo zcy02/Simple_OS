@@ -33,6 +33,7 @@ static void frequency_set(uint8_t counter_port,
 
 /* 时钟的中断处理函数 */
 static void intr_timer_handler(void) {
+   
    struct task_struct* cur_thread = running_thread();
 
    ASSERT(cur_thread->stack_magic == 0x11451419);         // 检查栈是否溢出
