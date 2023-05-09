@@ -1,5 +1,6 @@
 #ifndef __KERNEL_DEBUG_H
 #define __KERNEL_DEBUG_H
+#include "stdint.h"
 void panic_spin(char* filename, int line, const char* func, const char* condition);
 
 /*************************** __VA_ARGS__ ******************************* 
@@ -10,13 +11,18 @@ void panic_spin(char* filename, int line, const char* func, const char* conditio
 /************************************************************************/
 
 #ifdef NDEBUG      
-    #define ASSERT(CONDITION)  ((void)0) 
+    #define ASSERT(CONDITION)  ((void)0)
+    #define DEBUG(INFO) ((void)0) 
 #else
     #define ASSERT(CONDITION)                   \
         if (CONDITION) {} else {                \
             /* 符号#让编译器将宏的参数转化为字符串自变量 */         \                      
             PANIC(#CONDITION);                  \
-        }                
+        }       
+    #define DEBUG(INFO) \
+        if (sizeof(INFO) == sizeof(uint32_t)) {console_put_int(INFO);} else { \
+        console_put_str(INFO); \
+    }        
 
 #endif /* __NDEBUG */
 

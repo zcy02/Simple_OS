@@ -46,7 +46,7 @@ struct mem_block_desc k_block_descs[DESC_CNT]; // 内核内存块描述符数组
 
 /* 初始化内存池 */
 static void mem_pool_init(uint32_t all_mem) {
-    put_str("    mem_pool_init start\n");
+    console_put_str("    mem_pool_init start\n");
 
     // 页表大小 ＝ 1页的页目录表 ＋第 0 和第 768 个页目录项指向同一个页表, 之前创建页表的时候, 挨着页目录表创建了768-1022总共255个页表 + 上页目录的1页大小, 就是256
     // 第 769~1022 个页目录项共指向 254 个页表, 共 256 个页框
@@ -89,28 +89,28 @@ static void mem_pool_init(uint32_t all_mem) {
     user_pool.pool_bitmap.bits = (void*) (MEM_BITMAP_BASE + kbm_length);
 
     // 输出内存池信息
-    put_str("----- Memory Info-----\n");
-    put_str("Free memory / Total memory: ");
-    put_int(free_mem);
-    put_str(" / ");
-    put_int(all_mem);
-    put_str("\n");
-    put_str("-----Kernel/User Memory Pool Info-----\n");
-    put_str("kernel pool memory / user pool memory: ");
-    put_int(kernel_pool.pool_size);
-    put_str(" / ");
-    put_int(user_pool.pool_size);
-    put_str("\n");
-    put_str("kernel_pool_bitmap_start: ");
-    put_int((int) kernel_pool.pool_bitmap.bits);
-    put_str(" kernel_pool_phy_addr_start: ");
-    put_int(kernel_pool.phy_addr_start);
-    put_str("\n");
-    put_str("user_pool_bitmap_start: ");
-    put_int((int) user_pool.pool_bitmap.bits);
-    put_str(" user_pool_phy_addr_start: ");
-    put_int(user_pool.phy_addr_start);
-    put_str("\n");
+    console_put_str("----- Memory Info-----\n");
+    console_put_str("Free memory / Total memory: ");
+    console_put_int(free_mem);
+    console_put_str(" / ");
+    console_put_int(all_mem);
+    console_put_str("\n");
+    console_put_str("-----Kernel/User Memory Pool Info-----\n");
+    console_put_str("kernel pool memory / user pool memory: ");
+    console_put_int(kernel_pool.pool_size);
+    console_put_str(" / ");
+    console_put_int(user_pool.pool_size);
+    console_put_str("\n");
+    console_put_str("kernel_pool_bitmap_start: ");
+    console_put_int((int) kernel_pool.pool_bitmap.bits);
+    console_put_str(" kernel_pool_phy_addr_start: ");
+    console_put_int(kernel_pool.phy_addr_start);
+    console_put_str("\n");
+    console_put_str("user_pool_bitmap_start: ");
+    console_put_int((int) user_pool.pool_bitmap.bits);
+    console_put_str(" user_pool_phy_addr_start: ");
+    console_put_int(user_pool.phy_addr_start);
+    console_put_str("\n");
 
     // 将位图置 0
     bitmap_init(&kernel_pool.pool_bitmap);
@@ -125,7 +125,7 @@ static void mem_pool_init(uint32_t all_mem) {
     kernel_vaddr.vaddr_bitmap.bits = (void*) (MEM_BITMAP_BASE + kbm_length + ubm_length);
     kernel_vaddr.vaddr_start = K_HEAP_START;
     bitmap_init(&kernel_vaddr.vaddr_bitmap);
-    put_str("    mem_pool_init done \n");
+    console_put_str("    mem_pool_init done \n");
 }
 
 /*申请 page_cnt 个虚拟页，成功返回起始地址，失败返回 NULL*/
@@ -136,7 +136,7 @@ static void* get_vaddr(enum pool_flags flag, uint32_t page_cnt) {
         //内核虚拟内存池分配
         bitmap_idx_start = bitmap_scan(&kernel_vaddr.vaddr_bitmap, page_cnt);
         if (bitmap_idx_start == -1) {
-            put_str("No free page in kernel vaddr pool.");
+            console_put_str("No free page in kernel vaddr pool.");
             return NULL;    //虚拟内存池申请失败
         }
         while (cnt < page_cnt) {
@@ -151,8 +151,8 @@ static void* get_vaddr(enum pool_flags flag, uint32_t page_cnt) {
         struct task_struct* cur = running_thread(); //获取当前线程
         bitmap_idx_start = bitmap_scan(&cur->userprog_vaddr.vaddr_bitmap, page_cnt);
         if (bitmap_idx_start == -1) {
-            put_str("No free page in user vaddr pool.\nIn task: ");
-            put_str(cur->name);
+            console_put_str("No free page in user vaddr pool.\nIn task: ");
+            console_put_str(cur->name);
 	        return NULL;    //虚拟内存池申请失败
         }
         while(cnt < page_cnt) {
@@ -182,7 +182,7 @@ static void* palloc(struct pool* pool) {
     //找一个空闲位
     int bitmap_idx = bitmap_scan(&pool->pool_bitmap, 1);
     if (bitmap_idx == -1) {
-        put_str("No free page.");
+        console_put_str("No free page.");
         return NULL;
     }
     //设置位图位占用
@@ -230,7 +230,7 @@ void* malloc_page(enum pool_flags flag, uint32_t cnt) {
     while (pages-- > 0) {
         void* paddr = palloc(pool); //从对应物理地址池中分配页
         if (paddr == NULL) {
-            put_str("palloc failed in malloc_page. TODO: roll back");
+            console_put_str("palloc failed in malloc_page. TODO: roll back");
             return NULL;
         }
         add_projection((void*)vaddr, paddr);    //创建映射
@@ -241,12 +241,12 @@ void* malloc_page(enum pool_flags flag, uint32_t cnt) {
 
 /*封装从内核物理内存池申请内存*/
 void* kalloc(uint32_t cnt) {
-    lock_acquire(&user_pool.lock);
+    lock_acquire(&kernel_pool.lock);
     void* vaddr = malloc_page(KERNEL, cnt);
     if (vaddr != NULL) {
         memset(vaddr, 0, PAGE_SIZE * cnt);  //清空页框
     }
-    lock_release(&user_pool.lock);
+    lock_release(&kernel_pool.lock);
     return vaddr;
 }
 
@@ -325,12 +325,16 @@ static struct arena* block2arena(struct mem_block* b) {
 
 // 在堆中申请 size 字节内存
 void* sys_malloc(uint32_t size) {
+    
     enum pool_flags PF;
     struct pool* mem_pool;
     uint32_t pool_size;
     struct mem_block_desc* descs;
     struct task_struct* cur_thread = running_thread();
-
+    DEBUG(cur_thread->name);
+    DEBUG(" call sys_malloc for 0x");
+    DEBUG(size);
+    DEBUG(" B memory\n\n");
     // 判断用哪个内存池
     if (cur_thread->pgdir == NULL) { // 若为内核线程
         PF = KERNEL;
@@ -388,7 +392,6 @@ void* sys_malloc(uint32_t size) {
                 return NULL;
             }
             memset(a, 0, PG_SIZE);
-
             // 对于分配的小块内存, 将 desc 置为相应内存块描述符
             // cnt 置为 arena 可用的内存块数, large 置为 false
             a->desc = &descs[desc_idx];
@@ -397,7 +400,6 @@ void* sys_malloc(uint32_t size) {
             uint32_t block_idx;
 
             enum intr_status old_status = intr_disable();
-
             // 开始将 arena 拆分成内存块, 并添加到内存块描述符的 free_list 中
             for (block_idx = 0; block_idx < descs[desc_idx].blocks_per_arena; block_idx++) {
                 b = arena2block(a, block_idx);
@@ -453,6 +455,7 @@ static void vaddr_remove(enum pool_flags pf, void* _vaddr, uint32_t pg_cnt) {
         bit_idx_start = (vaddr - cur_thread->userprog_vaddr.vaddr_start) / PG_SIZE;
         while (cnt < pg_cnt) {
             bitmap_set(&cur_thread->userprog_vaddr.vaddr_bitmap, bit_idx_start+cnt++, 0);
+            
         }
     }
 }
@@ -546,12 +549,28 @@ void sys_free(void* ptr) {
 
 // 内存管理部分初始化入口
 void mem_init() {
-    put_str("mem_init start\n");
+    console_put_str("mem_init start\n");
     // 获取物理内存大小, loader 中定义的 total_memory 地址为 0xb00
     uint32_t mem_bytes_total = (*(uint32_t*) (0xb00));  
     mem_pool_init(mem_bytes_total);                     // 初始化内存池
     // 初始化 mem_block_desc 数组 descs, 为 malloc 做准备
     block_desc_init(k_block_descs);
-    put_str("mem_init done\n");
+    console_put_str("mem_init done\n");
+}
+
+void print_pool_usage(enum pool_flags flag) {
+    struct pool* pool = POOL_SELECTOR(flag);
+    lock_acquire(&pool->lock);
+    if (flag == KERNEL) {
+        console_put_str("Kernel memory usage: 0x");
+    }
+    else {
+        console_put_str("User memory usage: 0x");
+    }
+    console_put_int(pool->pool_bitmap.usage * 4);
+    console_put_str("KB --- ");
+    console_put_int(pool->pool_bitmap.usage * 100 / 65280);
+    console_put_str("%\n");
+    lock_release(&pool->lock);
 }
 

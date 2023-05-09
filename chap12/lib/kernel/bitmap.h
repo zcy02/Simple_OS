@@ -5,7 +5,9 @@
 struct bitmap {
 	uint32_t btmp_bytes_len;
 	/* 遍历位图时，以字节遍历，但在标志对应内存页时，以位为单位，所以此处位图指针为单字节 */
+	uint32_t usage;
 	uint8_t* bits;
+	
 };
 
 void bitmap_init(struct bitmap* btmp);

@@ -8,6 +8,7 @@
 /* 将位图btmp初始化 */
 void bitmap_init(struct bitmap* btmp) {
 	memset(btmp->bits, 0, btmp->btmp_bytes_len);
+	btmp->usage = 0;
 }
 
 /* 判断bit_idx位是否为1,若为1,返回true,否则返回false */
@@ -73,11 +74,18 @@ void bitmap_set(struct bitmap* btmp, uint32_t bit_idx, int8_t value) {
 	uint32_t bit_odd = bit_idx % 8;				// 找到要操作位在字节中的位置
 
 /* BITMAP_MASK为0x1,对其进行移位操作后，与索引位进行逻辑操作 */
-	if (value) {			// value为1
-		btmp->bits[byte_idx] |= (BITMAP_MASK << bit_odd);	// 做或操作，将要修改的位置为2
-	} else {			// value为0
-		btmp->bits[byte_idx] &= ~(BITMAP_MASK << bit_odd);	//将BITMAP_MASK置为0后，做与操作，将要修改位置置为0
-	}
+	if (value) {		      // 如果value为1
+      //if (!(btmp->bits[byte_idx] & (BITMAP_MASK << bit_odd))) {
+         btmp->usage += 1;
+      //}
+      btmp->bits[byte_idx] |= (BITMAP_MASK << bit_odd);
+      
+   } else {		      // 若为0
+      //if (btmp->bits[byte_idx] & (BITMAP_MASK << bit_odd)) {
+         btmp->usage -= 1;
+      //}
+      btmp->bits[byte_idx] &= ~(BITMAP_MASK << bit_odd);
+   }
 }
 
 

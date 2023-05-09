@@ -29,7 +29,7 @@ void start_process(void* filename_) {
     asm volatile ("movl %0, %%esp; jmp intr_exit" : : "g" (proc_stack) : "memory");
 }
 
-/* 击活页表 */
+/* 激活页表 */
 void page_dir_activate(struct task_struct* p_thread) {
     /********************************************************
      * 执行此函数时,当前任务可能是线程。
@@ -100,8 +100,8 @@ void process_execute(void* filename, char* name) {
     init_thread(thread, name, default_prio); 
     create_user_vaddr_bitmap(thread);
     thread_create(thread, start_process, filename);//start_process(filename)
-    thread->pgdir = create_page_dir();
-    block_desc_init(thread->u_block_desc);
+    thread->pgdir = create_page_dir();//创建用户进程页目录表并复制内核页目录表
+    block_desc_init(thread->u_block_desc);// 初始化用户进程内存块描述符
     enum intr_status old_status = intr_disable();
     ASSERT(!elem_find(&thread_ready_list, &thread->general_tag));
     list_append(&thread_ready_list, &thread->general_tag);
