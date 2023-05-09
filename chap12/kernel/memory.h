@@ -2,6 +2,7 @@
 #define __KERNEL_MEMORY_H
 #include "stdint.h"
 #include "bitmap.h"
+#include "list.h"
 
 /*PTE 及 PDE 属性操作*/
 //Present
@@ -24,6 +25,20 @@ struct virtual_addr {
 	struct bitmap vaddr_bitmap;	// 虚拟地址用到的位图结构
 	uint32_t vaddr_start;		// 虚拟地址起始地址
 };
+
+// 内存块
+struct mem_block {
+    struct list_elem free_elem;
+};
+
+// 内存块描述符
+struct mem_block_desc {
+    uint32_t block_size; // 内存块大小
+    uint32_t blocks_per_arena; // 本 arena 中可容纳此 mem_block 的数量
+    struct list free_list; // 目前可用的 mem_block 链表
+};
+
+#define DESC_CNT 7 // 内存块描述符个数
 
 extern struct pool kernel_pool, user_pool;
 void mem_init(void);

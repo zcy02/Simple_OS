@@ -86,6 +86,7 @@ struct task_struct {
    struct list_elem all_list_tag;   //用于线程被加入全部线程队列时
    uint32_t* pgdir;  //任务的页表，线程为 NULL
    struct virtual_addr userprog_vaddr; //*** 用户进程的虚拟地址池
+   struct mem_block_desc u_block_desc[DESC_CNT];   //用户进程内存块描述符
    uint32_t stack_magic;	 // 用这串数字做栈的边界标记,用于检测栈的溢出
 };
 
